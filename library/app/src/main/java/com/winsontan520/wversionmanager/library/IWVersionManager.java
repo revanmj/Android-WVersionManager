@@ -51,6 +51,11 @@ public interface IWVersionManager {
     public void setMessage(String message);
 
     /**
+     * @param value Set if Android's Download Manager should be used (off by default) instead of opening a link in a browser
+     */
+    public void useDownloadManager(boolean value);
+
+    /**
      * @return message of dialog
      */
     public String getMessage();

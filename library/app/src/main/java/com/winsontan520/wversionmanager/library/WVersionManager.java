@@ -14,14 +14,17 @@ import org.json.JSONTokener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
@@ -51,6 +54,7 @@ public class WVersionManager implements IWVersionManager {
     private AlertDialogButtonListener listener;
     private boolean mDialogCancelable = true;
     private boolean mIsAskForRate = false;
+    private boolean mUseDownloadManager = false;
     private String mAskForRatePositiveLabel;
     private String mAskForRateNegativeLabel;
     private int mMode = 100; // default mode
@@ -231,6 +235,17 @@ public class WVersionManager implements IWVersionManager {
     /*
      * (non-Javadoc)
      *
+     * @see
+     * com.winsontan520.wversionmanagertest.IWVersionManager#useDownloadManager(boolean)
+     */
+    @Override
+    public void useDownloadManager(boolean value) {
+        mUseDownloadManager = value;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see com.winsontan520.wversionmanagertest.IWVersionManager#getMessage()
      */
     @Override
@@ -351,7 +366,7 @@ public class WVersionManager implements IWVersionManager {
     }
 
     private void updateNow(String url) {
-        if (url != null) {
+        if (url != null && !mUseDownloadManager) {
             try {
                 Uri uri = Uri.parse(url);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -359,6 +374,25 @@ public class WVersionManager implements IWVersionManager {
             } catch (Exception e) {
                 Log.e(TAG, "is update url correct?" + e);
             }
+        } else if (url != null) {
+            Uri downloadUri = Uri.parse(url);
+
+            // Use app's name as Download Manager's notification title
+            ApplicationInfo appInfo = activity.getApplicationInfo();
+            int stringId = appInfo.labelRes;
+            String title = stringId == 0 ?
+                    appInfo.nonLocalizedLabel.toString() : activity.getString(appInfo.labelRes);
+
+            // Build Download Manager's request
+            DownloadManager.Request request = new DownloadManager.Request(downloadUri);
+            request.setTitle(title);
+            request.allowScanningByMediaScanner();
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadUri.getLastPathSegment());
+
+            // Start downloading
+            DownloadManager manager = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
+            manager.enqueue(request);
         }
 
     }

@@ -2,9 +2,11 @@ Android-WVersionManager
 ====================
 
 ## Objective
-- Whole point of this fork is to convert library to an Android Studio project and remove depency on deprecated org.apache.http library (replacing all calls with URLConnection or HttpURLConnection).
+Point of this fork is to:
+- Convert WVersionManager library to an Android Studio project and remove depency on deprecated org.apache.http library (replacing all calls with URLConnection or HttpURLConnection)
+- Add option to download update using Android's Download Manager (.useDownloadManager(true)). Remember, that you have to add "android.permission.REQUEST_INSTALL_PACKAGES" (if you target Oreo or higher) and "android.permission.WRITE_EXTERNAL_STORAGE" permissions to your app's manifest for this to work
 
-Compiled .jar file can be downloaded from [jar folder in this repo](https://github.com/revanmj/Android-WVersionManager/tree/master/jar) or [releases tab]().
+Compiled .jar file can be downloaded from [jar folder in this repo](https://github.com/revanmj/Android-WVersionManager/tree/master/jar) or [releases tab](https://github.com/revanmj/Android-WVersionManager/releases).
 
 You can read original readme with all details about the setup here: https://github.com/winsontan520/Android-WVersionManager/blob/master/README.md
 		
