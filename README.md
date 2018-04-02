@@ -1,6 +1,8 @@
 Android-WVersionManager
 ====================
 
+![build status](https://travis-ci.org/revanmj/Android-WVersionManager.svg?branch=master)
+
 ## Objective
 Point of this fork is to:
 - Convert WVersionManager library to an Android Studio project and remove depency on deprecated org.apache.http library (replacing all calls with URLConnection or HttpURLConnection)
