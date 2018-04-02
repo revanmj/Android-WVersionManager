@@ -14,4 +14,5 @@ android:
     - android-27
 
 script:
-  - ./library/gradlew clean check dependencyUpdate --profile
+  - cd ./library
+  - ./gradlew clean check --profile
