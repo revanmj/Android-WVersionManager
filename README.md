@@ -4,9 +4,13 @@ Android-WVersionManager
 ![build status](https://travis-ci.org/revanmj/Android-WVersionManager.svg?branch=master)
 
 ## Objective
-Point of this fork is to:
+Things changed/added by this fork:
 - Convert WVersionManager library to an Android Studio project and remove depency on deprecated org.apache.http library (replacing all calls with URLConnection or HttpURLConnection)
-- Add option to download update using Android's Download Manager (.useDownloadManager(true)). Remember, that you have to add "android.permission.REQUEST_INSTALL_PACKAGES" (if you target Oreo or higher) and "android.permission.WRITE_EXTERNAL_STORAGE" permissions to your app's manifest for this to work
+- Add option to download update using Android's Download Manager. Remember that your app must have "android.permission.WRITE_EXTERNAL_STORAGE" permission for this to work:
+```versionManager.useDownloadManager(true);```
+- Add option to automatically open downloaded APK file, as long as app has proper permissions in Oreo (android.permission.REQUEST_INSTALL_PACKAGES) or Unknown sources is enabled in case of lower versions. Otherwise Downloads app will be launched):
+```versionManager.installAfterDownload(true);```
+- Instead of setting strings (like button labels) by code, let them be overridden by adding them to app's strings.xml file (list of all string ids from this library can be [seen here](https://github.com/revanmj/Android-WVersionManager/blob/master/library/wversionmanager/src/main/res/values/strings.xml))
 
 Compiled .jar file can be downloaded from [jar folder in this repo](https://github.com/revanmj/Android-WVersionManager/tree/master/jar) or [releases tab](https://github.com/revanmj/Android-WVersionManager/releases).
 
