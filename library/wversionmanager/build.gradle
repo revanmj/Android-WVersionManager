@@ -3,7 +3,6 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
 ext {
-
     bintrayRepo = "Android-WVersionManager"
     bintrayName = "com.winsontan520.wversionmanager"
     libraryDescription = ''
@@ -15,7 +14,7 @@ ext {
     siteUrl = 'https://github.com/revanmj/Android-WVersionManager'
     gitUrl = 'https://github.com/revanmj/Android-WVersionManager.git'
 
-    libraryVersion = '1.5'
+    libraryVersion = "1.6"
 
     developerId = 'revanmj'
     developerName = 'Michal Jakubowski'
@@ -33,8 +32,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 5
-        versionName "1.5"
+        versionCode 6
+        versionName "$libraryVersion"
     }
 
     buildTypes {
@@ -43,10 +42,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    implementation 'com.android.support:support-v4:27.1.0'
+    implementation 'com.android.support:support-v4:27.1.1'
 }
 
 task deleteJar(type: Delete) {

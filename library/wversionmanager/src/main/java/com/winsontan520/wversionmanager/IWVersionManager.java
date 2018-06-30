@@ -1,59 +1,52 @@
-package com.winsontan520.wversionmanager.library;
+package com.winsontan520.wversionmanager;
 
+import android.Manifest;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.RequiresPermission;
 
 public interface IWVersionManager {
-
     /**
-     * @return Label of update now button
+     * Displays a dialog asking user to rate your app
      */
-    public String getUpdateNowLabel();
-
-
+    public void askForRate();
     /**
-     * @param updateNowLabel Set the label for update now button
+     * Initiates check for updates that may result in displaying a dialog with release notes
+     * and options to update now, remind user about it later or ignore that version
      */
-    public void setUpdateNowLabel(String updateNowLabel);
-
+    public void checkVersion();
     /**
-     * @return label of remind me later button
-     */
-    public String getRemindMeLaterLabel();
-
-    /**
-     * @param remindMeLaterLabel Set label of remind me later button
-     */
-    public void setRemindMeLaterLabel(String remindMeLaterLabel);
-
-    /**
-     * @return label of ignore this version button
-     */
-    public String getIgnoreThisVersionLabel();
-
-    /**
-     * @param ignoreThisVersionLabel Set label of ignore this version button
-     */
-    public void setIgnoreThisVersionLabel(String ignoreThisVersionLabel);
-
-    /**
-     * @param icon Set drawable of icon in dialog
+     * @param icon Drawable of icon in dialog
      */
     public void setIcon(Drawable icon);
 
     /**
-     * @param title Set title of dialog
+     * @param title Title of dialog
      */
     public void setTitle(String title);
 
     /**
-     * @param message Set message of dialog
+     * @param message Message of dialog
      */
     public void setMessage(String message);
 
     /**
-     * @param value Set if Android's Download Manager should be used (off by default) instead of opening a link in a browser
+     * Used to choose if Android's Download Manager should be used to download file at URL
+     * from JSON file to Downloads folder (off by default) instead of opening a link in a browser
+     * @param value <code>true</code> to use Download Manager, <code>false</code> otherwise
      */
+    @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void useDownloadManager(boolean value);
+
+    /**
+     * Setting this to <code>true</code> when {@link #useDownloadManager(boolean)}
+     * is also <code>true</code> will automatically fire APK installation dialog after download completes.
+     * This requires Unknown Sources to be enabled (globally on Nougat and lower,
+     * for your app specifically in Oreo or higher). If permission is not granted,
+     * system's Download app will be launched.
+     * @param value <code>true</code> to enable auto install, <code>false</code> otherwise
+     */
+    @RequiresPermission(anyOf = {Manifest.permission.REQUEST_INSTALL_PACKAGES, Manifest.permission.INSTALL_PACKAGES})
+    public void installAfterDownload(boolean value);
 
     /**
      * @return message of dialog
@@ -124,5 +117,4 @@ public interface IWVersionManager {
      * @param listener Set your own callback listener when receiving response from server
      */
     public void setOnReceiveListener(OnReceiveListener listener);
-
 }

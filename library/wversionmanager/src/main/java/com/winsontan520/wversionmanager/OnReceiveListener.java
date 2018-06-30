@@ -1,4 +1,4 @@
-package com.winsontan520.wversionmanager.library;
+package com.winsontan520.wversionmanager;
 
 public interface OnReceiveListener {
 
