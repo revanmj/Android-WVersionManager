@@ -121,7 +121,7 @@ public interface IWVersionManager {
     public void setCustomTagHandler(CustomTagHandler customTagHandler);
 
     /**
-     * @param OnReceiveListener Set your own callback listener when receiving response from server
+     * @param listener Set your own callback listener when receiving response from server
      */
     public void setOnReceiveListener(OnReceiveListener listener);
 

@@ -1,0 +1,70 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+ext {
+
+    bintrayRepo = "Android-WVersionManager"
+    bintrayName = "com.winsontan520.wversionmanager"
+    libraryDescription = ''
+
+    publishedGroupId = 'com.winsontan520.wversionmanager'
+    libraryName = 'wversionmanager'
+    artifact = 'wversionmanager'
+
+    siteUrl = 'https://github.com/revanmj/Android-WVersionManager'
+    gitUrl = 'https://github.com/revanmj/Android-WVersionManager.git'
+
+    libraryVersion = '1.5'
+
+    developerId = 'revanmj'
+    developerName = 'Michal Jakubowski'
+    developerEmail = 'revanmj@@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 27
+        versionCode 5
+        versionName "1.5"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.android.support:support-v4:27.1.0'
+}
+
+task deleteJar(type: Delete) {
+    delete 'libs/wversionmanager.jar'
+}
+
+task createJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('libs/')
+    include('classes.jar')
+    rename('classes.jar', 'wversionmanager.jar')
+}
+
+createJar.dependsOn(deleteJar, build)
+
+//Add these lines to publish library to bintray. This is the readymade scripts made by github user nuuneoi to make uploading to bintray easy.
+//Place it at the end of the file
+if (project.rootProject.file('local.properties').exists()) {
+    apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+    apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+}
