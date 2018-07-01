@@ -12,7 +12,12 @@ Things changed/added by this fork:
 ```versionManager.installAfterDownload(true);```
 - Instead of setting strings (like button labels) by code, let them be overridden by adding them to app's strings.xml file (list of all string ids from this library can be [seen here](https://github.com/revanmj/Android-WVersionManager/blob/master/library/wversionmanager/src/main/res/values/strings.xml))
 
-Compiled .jar file can be downloaded from [jar folder in this repo](https://github.com/revanmj/Android-WVersionManager/tree/master/jar) or [releases tab](https://github.com/revanmj/Android-WVersionManager/releases).
+Compiled .jar file can be downloaded from [releases tab](https://github.com/revanmj/Android-WVersionManager/releases) or added in build.gradle from jcenter repo:
+```
+dependencies {
+    implementation 'com.winsontan520.wversionmanager:wversionmanager:1.6'
+}
+```
 
 You can read original readme with all details about the setup here: https://github.com/winsontan520/Android-WVersionManager/blob/master/README.md
 		
