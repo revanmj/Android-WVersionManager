@@ -14,7 +14,7 @@ ext {
     siteUrl = 'https://github.com/revanmj/Android-WVersionManager'
     gitUrl = 'https://github.com/revanmj/Android-WVersionManager.git'
 
-    libraryVersion = "1.6"
+    libraryVersion = "1.6.1"
 
     developerId = 'revanmj'
     developerName = 'Michal Jakubowski'
@@ -32,7 +32,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 6
+        versionCode 7
         versionName "$libraryVersion"
     }
 

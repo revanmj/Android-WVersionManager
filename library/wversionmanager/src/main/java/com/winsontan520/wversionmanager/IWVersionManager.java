@@ -9,11 +9,21 @@ public interface IWVersionManager {
      * Displays a dialog asking user to rate your app
      */
     public void askForRate();
+
     /**
      * Initiates check for updates that may result in displaying a dialog with release notes
      * and options to update now, remind user about it later or ignore that version
      */
     public void checkVersion();
+
+    /**
+     * Initiates check for updates that may result in displaying a dialog with release notes
+     * and options to update now, remind user about it later or ignore that version
+     * @param forced <code>true</code> if you want to ignore reminder timer,
+     *               <code>false</code> otherwise
+     */
+    public void checkVersion(boolean forced);
+
     /**
      * @param icon Drawable of icon in dialog
      */

@@ -78,6 +78,17 @@ public class WVersionManager implements IWVersionManager {
      */
     @Override
     public void checkVersion() {
+        checkVersion(false);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.winsontan520.wversionmanager.IWVersionManager#checkVersion(boolean)
+     */
+    @Override
+    public void checkVersion(boolean forced) {
         mMode = MODE_CHECK_VERSION;
         String versionContentUrl = getVersionContentUrl();
         if (versionContentUrl == null) {
@@ -93,7 +104,7 @@ public class WVersionManager implements IWVersionManager {
             Log.v(TAG, "reminderTimeStamp=" + reminderTimeStamp);
         }
 
-        if (currentTimeStamp > reminderTimeStamp) {
+        if (currentTimeStamp > reminderTimeStamp || forced) {
             // fire request to get update version content
             if (BuildConfig.DEBUG) {
                 Log.v(TAG, "getting update content...");
