@@ -13,23 +13,29 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.LoaderManager;
+import android.content.AsyncTaskLoader;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.text.Html;
 import android.util.Log;
@@ -46,6 +52,7 @@ public class WVersionManager implements IWVersionManager {
 
     private static final String PREF_IGNORE_VERSION_CODE = "w.ignore.version.code";
     private static final String PREF_REMINDER_TIME = "w.reminder.time";
+    private static final String PREF_IS_BLOCKING = "w.is_blocking_update";
     private static final String APK_MIME_TYPE = "application/vnd.android.package-archive";
 
     private Activity mActivity;
@@ -57,6 +64,7 @@ public class WVersionManager implements IWVersionManager {
     private boolean mDialogCancelable = true;
     private boolean mUseDownloadManager = false;
     private boolean mAutoInstall = false;
+    private boolean mIsBlocking = false;
     private int mReminderTimer;
     private int mVersionCode;
     private int mMode = MODE_CHECK_VERSION; // Default mode
@@ -68,6 +76,10 @@ public class WVersionManager implements IWVersionManager {
         this.mActivity = act;
         this.mDialogListener = new AlertDialogButtonListener();
         this.mCustomTagHandler = new CustomTagHandler();
+        this.mIsBlocking = PreferenceManager.getDefaultSharedPreferences(mActivity)
+                .getBoolean(PREF_IS_BLOCKING, false);
+        if (mIsBlocking)
+            mDialogCancelable = false;
     }
 
     /*
@@ -109,8 +121,10 @@ public class WVersionManager implements IWVersionManager {
             if (BuildConfig.DEBUG) {
                 Log.v(TAG, "getting update content...");
             }
-            VersionContentRequest request = new VersionContentRequest(mActivity);
-            request.execute(getVersionContentUrl());
+            VersionContentLoader loader = new VersionContentLoader();
+            Bundle bundle = new Bundle();
+            bundle.putString(VersionContentLoader.KEY_URL, getVersionContentUrl());
+            mActivity.getLoaderManager().initLoader(934213, bundle, loader);
         }
     }
 
@@ -255,6 +269,17 @@ public class WVersionManager implements IWVersionManager {
      * (non-Javadoc)
      *
      * @see
+     * com.winsontan520.wversionmanager.IWVersionManager#isBlockingUpdate()
+     */
+    @Override
+    public boolean isBlockingUpdate() {
+        return mIsBlocking;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
      * com.winsontan520.wversionmanager.IWVersionManager#getVersionContentUrl()
      */
     @Override
@@ -350,10 +375,26 @@ public class WVersionManager implements IWVersionManager {
         this.mCustomTagHandler = customTagHandler;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.winsontan520.wversionmanager.IWVersionManager#isDialogCancelable
+     * (com.winsontan520.wversionmanager.OnReceiveListener)
+     */
+    @Override
     public boolean isDialogCancelable() {
         return mDialogCancelable;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.winsontan520.wversionmanager.IWVersionManager#setDialogCancelable
+     * (com.winsontan520.wversionmanager.OnReceiveListener)
+     */
+    @Override
     public void setDialogCancelable(boolean dialogCancelable) {
         mDialogCancelable = dialogCancelable;
     }
@@ -384,8 +425,10 @@ public class WVersionManager implements IWVersionManager {
         switch (mMode) {
             case MODE_CHECK_VERSION:
                 builder.setPositiveButton(R.string.wvm_button_update, mDialogListener);
-                builder.setNeutralButton(R.string.wvm_button_remind_later, mDialogListener);
-                builder.setNegativeButton(R.string.wvm_button_ignore, mDialogListener);
+                if (!mIsBlocking) {
+                    builder.setNeutralButton(R.string.wvm_button_remind_later, mDialogListener);
+                    builder.setNegativeButton(R.string.wvm_button_ignore, mDialogListener);
+                }
                 break;
             case MODE_ASK_FOR_RATE:
                 builder.setPositiveButton(R.string.wvm_button_ok, mDialogListener);
@@ -400,31 +443,6 @@ public class WVersionManager implements IWVersionManager {
         AlertDialog dialog = builder.create();
         if (mActivity != null && !mActivity.isFinishing()) {
             dialog.show();
-        }
-    }
-
-    private class AlertDialogButtonListener implements DialogInterface.OnClickListener {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-                case AlertDialog.BUTTON_POSITIVE:
-                    switch (mMode) {
-                        case MODE_CHECK_VERSION:
-                            updateNow(getUpdateUrl());
-                            break;
-                        case MODE_ASK_FOR_RATE:
-                            mActivity.startActivity(new Intent(Intent.ACTION_VIEW,
-                                    Uri.parse(getGooglePlayStoreUrl())));
-                            break;
-                    }
-                    break;
-                case AlertDialog.BUTTON_NEUTRAL:
-                    remindMeLater(getReminderTimer());
-                    break;
-                case AlertDialog.BUTTON_NEGATIVE:
-                    ignoreThisVersion();
-                    break;
-            }
         }
     }
 
@@ -497,6 +515,7 @@ public class WVersionManager implements IWVersionManager {
         }
     }
 
+    @SuppressLint("ApplySharedPref")
     private void ignoreThisVersion() {
         PreferenceManager.getDefaultSharedPreferences(mActivity).edit()
                 .putInt(PREF_IGNORE_VERSION_CODE, mVersionCode).commit();
@@ -516,6 +535,7 @@ public class WVersionManager implements IWVersionManager {
         setReminderTime(reminderTimeStamp);
     }
 
+    @SuppressLint("ApplySharedPref")
     private void setReminderTime(long reminderTimeStamp) {
         PreferenceManager.getDefaultSharedPreferences(mActivity).edit()
                 .putLong(PREF_REMINDER_TIME + mMode, reminderTimeStamp).commit();
@@ -535,21 +555,119 @@ public class WVersionManager implements IWVersionManager {
         return mActivity.getApplicationInfo().loadIcon(mActivity.getPackageManager());
     }
 
-    class VersionContentRequest extends AsyncTask<String, Void, String> {
-        Context context;
-        int statusCode;
+    private class AlertDialogButtonListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case AlertDialog.BUTTON_POSITIVE:
+                    switch (mMode) {
+                        case MODE_CHECK_VERSION:
+                            updateNow(getUpdateUrl());
+                            break;
+                        case MODE_ASK_FOR_RATE:
+                            mActivity.startActivity(new Intent(Intent.ACTION_VIEW,
+                                    Uri.parse(getGooglePlayStoreUrl())));
+                            break;
+                    }
+                    break;
+                case AlertDialog.BUTTON_NEUTRAL:
+                    remindMeLater(getReminderTimer());
+                    break;
+                case AlertDialog.BUTTON_NEGATIVE:
+                    ignoreThisVersion();
+                    break;
+            }
+        }
+    }
 
-        VersionContentRequest(Context context) {
-            this.context = context;
+    private class VersionContentLoader implements LoaderManager.LoaderCallbacks<VersionContentData> {
+        static final String KEY_URL = "url";
+        @NonNull
+        @Override
+        public Loader<VersionContentData> onCreateLoader(int id, @Nullable Bundle args) {
+            String url = args != null ? args.getString(KEY_URL) : null;
+            return new VersionContentRequest(mActivity, url);
         }
 
         @Override
-        protected String doInBackground(String... uri) {
+        @SuppressLint("ApplySharedPref")
+        public void onLoadFinished(@NonNull Loader<VersionContentData> loader, VersionContentData data) {
+            mVersionCode = 0;
+            int statusCode = data.getStatusCode();
+            if (statusCode != HttpURLConnection.HTTP_OK) {
+                Log.e(TAG, "Response invalid. status code = " + statusCode);
+                if (mOnReceiveListener != null) {
+                    mOnReceiveListener.onReceive(statusCode, false, null);
+                }
+            } else {
+                String result = data.getResult();
+                try {
+                    if (!result.startsWith("{")) { // for response who append with unknown char
+                        result = result.substring(1);
+                    }
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "status = " + statusCode);
+                        Log.d(TAG, "result = " + result);
+                    }
+
+                    // json format from server:
+                    JSONObject json = (JSONObject) new JSONTokener(result).nextValue();
+                    mVersionCode = json.optInt("version_code");
+                    mIsBlocking = json.optBoolean("is_blocking", false);
+                    PreferenceManager.getDefaultSharedPreferences(mActivity).edit()
+                            .putBoolean(PREF_IS_BLOCKING, mIsBlocking).commit();
+                    if (mIsBlocking)
+                        mDialogCancelable = false;
+
+                    // show default dialog if no listener is set OR return true
+                    if (mOnReceiveListener == null ||
+                            mOnReceiveListener.onReceive(statusCode, mIsBlocking, result)) {
+                        int currentVersionCode = getCurrentVersionCode();
+                        if (currentVersionCode < mVersionCode) {
+                            // new versionCode will always higher than currentVersionCode
+                            if (mVersionCode != getIgnoreVersionCode()) {
+                                // set dialog message and show update dialog
+                                String content = json.optString("content");
+                                setMessage(content);
+                                showDialog();
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    Log.e(TAG, "is your server response have valid json format?");
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
+                }
+            }
+            mActivity.getLoaderManager().destroyLoader(loader.getId());
+        }
+
+        @Override
+        public void onLoaderReset(@NonNull Loader<VersionContentData> loader) { }
+    }
+
+    private static class VersionContentRequest extends AsyncTaskLoader<VersionContentData> {
+        private String mUrl;
+
+        VersionContentRequest(Context context, String url) {
+            super(context);
+            mUrl = url;
+        }
+
+        @Override
+        protected void onStartLoading() {
+            forceLoad();
+        }
+
+        @Nullable
+        @Override
+        public VersionContentData loadInBackground() {
+            int statusCode = -1;
             String responseBody = null;
             ByteArrayOutputStream out = null;
 
             try {
-                URL url = new URL(uri[0]);
+                URL url = new URL(mUrl);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestProperty("Connection", "close");
                 connection.setConnectTimeout(6000);
@@ -560,8 +678,8 @@ public class WVersionManager implements IWVersionManager {
                 if (statusCode == HttpURLConnection.HTTP_OK) {
                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
 
-                    StringBuilder result = new StringBuilder("");
-                    String line = "";
+                    StringBuilder result = new StringBuilder();
+                    String line;
                     while ((line = br.readLine()) != null) {
                         result.append(line);
                     }
@@ -580,53 +698,25 @@ public class WVersionManager implements IWVersionManager {
                     }
                 }
             }
-            return responseBody;
+            return new VersionContentData(statusCode, responseBody);
+        }
+    }
+
+    static class VersionContentData {
+        private String result;
+        private int statusCode;
+
+        VersionContentData(int statusCode, String result) {
+            this.statusCode = statusCode;
+            this.result = result;
         }
 
-        @Override
-        protected void onPostExecute(String result) {
-            mVersionCode = 0;
-            String content = null;
-            if (statusCode != HttpURLConnection.HTTP_OK) {
-                Log.e(TAG, "Response invalid. status code = " + statusCode);
-                if (mOnReceiveListener != null) {
-                    mOnReceiveListener.onReceive(statusCode, result);
-                }
-            } else {
-                try {
-                    if (!result.startsWith("{")) { // for response who append with unknown char
-                        result = result.substring(1);
-                    }
-                    if (BuildConfig.DEBUG) {
-                        Log.d(TAG, "status = " + statusCode);
-                        Log.d(TAG, "result = " + result);
-                    }
+        String getResult() {
+            return result;
+        }
 
-                    // show default dialog if no listener is set OR return true
-                    if (mOnReceiveListener == null || mOnReceiveListener.onReceive(statusCode, result)) {
-                        // json format from server:
-                        JSONObject json = (JSONObject) new JSONTokener(result).nextValue();
-                        mVersionCode = json.optInt("version_code");
-                        content = json.optString("content");
-
-                        int currentVersionCode = getCurrentVersionCode();
-                        if (currentVersionCode < mVersionCode) {
-                            // new versionCode will always higher than
-                            // currentVersionCode
-                            if (mVersionCode != getIgnoreVersionCode()) {
-                                // set dialog message
-                                setMessage(content);
-                                // show update dialog
-                                showDialog();
-                            }
-                        }
-                    }
-                } catch (JSONException e) {
-                    Log.e(TAG, "is your server response have valid json format?");
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
-                }
-            }
+        int getStatusCode() {
+            return statusCode;
         }
     }
 }

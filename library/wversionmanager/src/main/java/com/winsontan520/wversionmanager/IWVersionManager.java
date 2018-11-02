@@ -114,6 +114,22 @@ public interface IWVersionManager {
     public int getIgnoreVersionCode();
 
     /**
+     * @return whenever last received update data was telling that its blocking (app won't
+     * function properly without it for long, for example due to server side changes).
+     */
+    public boolean isBlockingUpdate();
+
+    /**
+     * @return value telling if update dialog will be cancelable or not
+     */
+    public boolean isDialogCancelable();
+
+    /**
+     * @param dialogCancelable sets if update dialog should be cancelable or not
+     */
+    public void setDialogCancelable(boolean dialogCancelable);
+
+    /**
      * @return CustomTagHandler object
      */
     public CustomTagHandler getCustomTagHandler();
@@ -124,7 +140,8 @@ public interface IWVersionManager {
     public void setCustomTagHandler(CustomTagHandler customTagHandler);
 
     /**
-     * @param listener Set your own callback listener when receiving response from server
+     * @param listener Set your own callback listener when receiving response from server.
+     *                 Must implement {@link OnReceiveListener} interface.
      */
     public void setOnReceiveListener(OnReceiveListener listener);
 }

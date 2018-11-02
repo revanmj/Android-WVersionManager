@@ -12,11 +12,12 @@ Things changed/added by this fork:
 `versionManager.installAfterDownload(true);`
 - Add option to force update check (by ignoring remind timer): `versionManager.checkVersion(true);`
 - Instead of setting strings (like button labels) by code, let them be overridden by adding them to app's strings.xml file (list of all string ids from this library can be [seen here](https://github.com/revanmj/Android-WVersionManager/blob/master/library/wversionmanager/src/main/res/values/strings.xml))
+- Implemented concept of a "blocking update" - after adding `is_blocking` field set to true in your JSON file, default update dialog will only show **Update** button (it also won't be cancelable). You also will be able to check this value by calling `versionManager.isBlockingUpdate();` after update check or using `onReceive(int status, boolean isBlocking, String result)` method from `com.winsontan520.wversionmanager.OnReceiveListener`. This will be also saved to SharedPreferences, so it will survive app restart.
 
 Compiled .jar file can be downloaded from [releases tab](https://github.com/revanmj/Android-WVersionManager/releases) or added in build.gradle from jcenter repo:
 ```
 dependencies {
-    implementation 'com.winsontan520.wversionmanager:wversionmanager:1.6.1'
+    implementation 'com.winsontan520.wversionmanager:wversionmanager:1.7'
 }
 ```
 
