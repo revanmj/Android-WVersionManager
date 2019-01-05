@@ -15,7 +15,6 @@ import org.json.JSONTokener;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
@@ -34,12 +33,14 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
 import android.text.Html;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 
 import com.winsontan520.wversionmanager.library.BuildConfig;
 import com.winsontan520.wversionmanager.library.R;

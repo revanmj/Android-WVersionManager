@@ -2,7 +2,7 @@ package com.winsontan520.wversionmanager;
 
 import android.Manifest;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.RequiresPermission;
+import androidx.annotation.RequiresPermission;
 
 public interface IWVersionManager {
     /**
