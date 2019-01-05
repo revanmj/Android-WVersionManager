@@ -626,7 +626,7 @@ public class WVersionManager implements IWVersionManager {
                         int currentVersionCode = getCurrentVersionCode();
                         if (currentVersionCode < mVersionCode
                                 && mVersionCode != getIgnoreVersionCode()) {
-                            // User download URL from JSON if available
+                            // Use download URL from JSON if available
                             String downloadUrl = json.optString("download_url");
                             if (downloadUrl != null && downloadUrl.startsWith("http")) {
                                 mUpdateUrl = downloadUrl;
