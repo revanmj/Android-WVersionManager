@@ -620,22 +620,25 @@ public class WVersionManager implements IWVersionManager {
                     if (mIsBlocking)
                         mDialogCancelable = false;
 
-                    // show default dialog if no listener is set OR return true
+                    // show default dialog if no listener is set OR it returned true
                     if (mOnReceiveListener == null ||
                             mOnReceiveListener.onReceive(statusCode, mIsBlocking, result)) {
                         int currentVersionCode = getCurrentVersionCode();
-                        if (currentVersionCode < mVersionCode) {
-                            // new versionCode will always higher than currentVersionCode
-                            if (mVersionCode != getIgnoreVersionCode()) {
-                                // set dialog message and show update dialog
-                                String content = json.optString("content");
-                                setMessage(content);
-                                showDialog();
+                        if (currentVersionCode < mVersionCode
+                                && mVersionCode != getIgnoreVersionCode()) {
+                            // User download URL from JSON if available
+                            String downloadUrl = json.optString("download_url");
+                            if (downloadUrl != null && downloadUrl.startsWith("http")) {
+                                mUpdateUrl = downloadUrl;
                             }
+                            // set dialog message and show update dialog
+                            String content = json.optString("content");
+                            setMessage(content);
+                            showDialog();
                         }
                     }
                 } catch (JSONException e) {
-                    Log.e(TAG, "is your server response have valid json format?");
+                    Log.e(TAG, "does your server response have valid json format?");
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());
                 }
