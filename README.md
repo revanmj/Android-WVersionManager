@@ -1,7 +1,7 @@
 Android-WVersionManager
 ====================
 
-![build status](https://travis-ci.org/revanmj/Android-WVersionManager.svg?branch=master)  [![Download](https://api.bintray.com/packages/revanmj/Android-WVersionManager/com.winsontan520.wversionmanager/images/download.svg) ](https://bintray.com/revanmj/Android-WVersionManager/com.winsontan520.wversionmanager/_latestVersion)
+[![Download](https://api.bintray.com/packages/revanmj/Android-WVersionManager/com.winsontan520.wversionmanager/images/download.svg) ](https://bintray.com/revanmj/Android-WVersionManager/com.winsontan520.wversionmanager/_latestVersion)
 
 ## Objective
 Things changed/added by this fork:
