@@ -16,7 +16,7 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Gradle
-      run: ./library/gradlew publish
+      run: cd ./library && ./gradlew publish
       env:
         GPR_USER: ${{ secrets.GITHUB_ACTOR }}
         GPR_API_KEY: ${{ secrets.GPR_API_KEY }}
