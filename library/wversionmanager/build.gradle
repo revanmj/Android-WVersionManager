@@ -75,7 +75,11 @@ if (project.rootProject.file('local.properties').exists()) {
 }
 
 def githubProperties = new Properties()
-githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+try {
+    githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+} catch (all) {
+    println('github.properties file does not exist!')
+}
 
 publishing {
     publications {
