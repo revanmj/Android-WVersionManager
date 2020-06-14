@@ -55,6 +55,7 @@ public class WVersionManager implements IWVersionManager {
     private static final String PREF_REMINDER_TIME = "w.reminder.time";
     private static final String PREF_IS_BLOCKING = "w.is_blocking_update";
     private static final String APK_MIME_TYPE = "application/vnd.android.package-archive";
+    private static final String PLAY_STORE_URI = "market://details?id=";
 
     private Activity mActivity;
     private Drawable mIcon;
@@ -448,7 +449,7 @@ public class WVersionManager implements IWVersionManager {
     }
 
     private void updateNow(String url) {
-        if (url != null && !mUseDownloadManager) {
+        if (url != null && (!mUseDownloadManager || url.startsWith(PLAY_STORE_URI))) {
             try {
                 Uri uri = Uri.parse(url);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -549,7 +550,7 @@ public class WVersionManager implements IWVersionManager {
 
     private String getGooglePlayStoreUrl() {
         // currently google play is using package name as id
-        return "market://details?id=" + mActivity.getApplicationInfo().packageName;
+        return PLAY_STORE_URI + mActivity.getApplicationInfo().packageName;
     }
 
     private Drawable getDefaultAppIcon() {
