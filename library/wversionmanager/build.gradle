@@ -15,7 +15,7 @@ ext {
     siteUrl = 'https://github.com/revanmj/Android-WVersionManager'
     gitUrl = 'https://github.com/revanmj/Android-WVersionManager.git'
 
-    libraryVersion = "1.7.1"
+    libraryVersion = "1.7.2"
 
     developerId = 'revanmj'
     developerName = 'Michal Jakubowski'
@@ -33,7 +33,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 9
+        versionCode 10
         versionName "$libraryVersion"
     }
 
@@ -51,7 +51,7 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
 }
 
 task deleteJar(type: Delete) {
