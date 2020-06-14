@@ -2,6 +2,9 @@ package com.winsontan520.wversionmanager;
 
 import android.Manifest;
 import android.graphics.drawable.Drawable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
 
 public interface IWVersionManager {
@@ -27,17 +30,17 @@ public interface IWVersionManager {
     /**
      * @param icon Drawable of icon in dialog
      */
-    public void setIcon(Drawable icon);
+    public void setIcon(@Nullable Drawable icon);
 
     /**
      * @param title Title of dialog
      */
-    public void setTitle(String title);
+    public void setTitle(@Nullable String title);
 
     /**
      * @param message Message of dialog
      */
-    public void setMessage(String message);
+    public void setMessage(@Nullable String message);
 
     /**
      * Used to choose if Android's Download Manager should be used to download file at URL
@@ -61,37 +64,37 @@ public interface IWVersionManager {
     /**
      * @return message of dialog
      */
-    public String getMessage();
+    public @NonNull String getMessage();
 
     /**
      * @return title of dialog
      */
-    public String getTitle();
+    public @NonNull String getTitle();
 
     /**
      * @return drawable of icon
      */
-    public Drawable getIcon();
+    public @NonNull Drawable getIcon();
 
     /**
      * @return url to execute when update now button clicked. Default value is the link in google play based on app package name.
      */
-    public String getUpdateUrl();
+    public @NonNull String getUpdateUrl();
 
     /**
      * @param updateUrl Set url to execute when update now button clicked
      */
-    public void setUpdateUrl(String updateUrl);
+    public void setUpdateUrl(@Nullable String updateUrl);
 
     /**
      * @return url which should return update content in json format
      */
-    public String getVersionContentUrl();
+    public @Nullable String getVersionContentUrl();
 
     /**
      * @param versionContentUrl Set the update content url
      */
-    public void setVersionContentUrl(String versionContentUrl);
+    public void setVersionContentUrl(@NonNull String versionContentUrl);
 
     /**
      * @param minutes Set reminder time in minutes when remind me later button clicked
@@ -132,16 +135,16 @@ public interface IWVersionManager {
     /**
      * @return CustomTagHandler object
      */
-    public CustomTagHandler getCustomTagHandler();
+    public @Nullable CustomTagHandler getCustomTagHandler();
 
     /**
      * @param customTagHandler Set your own custom tag handler
      */
-    public void setCustomTagHandler(CustomTagHandler customTagHandler);
+    public void setCustomTagHandler(@Nullable CustomTagHandler customTagHandler);
 
     /**
      * @param listener Set your own callback listener when receiving response from server.
      *                 Must implement {@link OnReceiveListener} interface.
      */
-    public void setOnReceiveListener(OnReceiveListener listener);
+    public void setOnReceiveListener(@Nullable OnReceiveListener listener);
 }

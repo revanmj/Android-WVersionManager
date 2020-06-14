@@ -203,7 +203,7 @@ public class WVersionManager implements IWVersionManager {
      * @see com.winsontan520.wversionmanager.IWVersionManager#getMessage()
      */
     @Override
-    public String getMessage() {
+    public @NonNull String getMessage() {
         String defaultMessage = null;
         switch (mMode) {
             case MODE_CHECK_VERSION:
@@ -223,7 +223,7 @@ public class WVersionManager implements IWVersionManager {
      * @see com.winsontan520.wversionmanager.IWVersionManager#getTitle()
      */
     @Override
-    public String getTitle() {
+    public @NonNull String getTitle() {
         String defaultTitle = null;
         switch (mMode) {
             case MODE_CHECK_VERSION:
@@ -232,6 +232,8 @@ public class WVersionManager implements IWVersionManager {
             case MODE_ASK_FOR_RATE:
                 defaultTitle = mActivity.getString(R.string.wvm_dialog_title_rate_us);
                 break;
+            default:
+                defaultTitle = "";
         }
         return mTitle != null ? mTitle : defaultTitle;
     }
@@ -242,7 +244,7 @@ public class WVersionManager implements IWVersionManager {
      * @see com.winsontan520.wversionmanager.IWVersionManager#getIcon()
      */
     @Override
-    public Drawable getIcon() {
+    public @NonNull Drawable getIcon() {
         return mIcon != null ? mIcon : getDefaultAppIcon();
     }
 
@@ -252,7 +254,7 @@ public class WVersionManager implements IWVersionManager {
      * @see com.winsontan520.wversionmanager.IWVersionManager#getUpdateUrl()
      */
     @Override
-    public String getUpdateUrl() {
+    public @NonNull String getUpdateUrl() {
         return mUpdateUrl != null ? mUpdateUrl : getGooglePlayStoreUrl();
     }
 
@@ -296,7 +298,7 @@ public class WVersionManager implements IWVersionManager {
      * com.winsontan520.wversionmanager.IWVersionManager#setVersionContentUrl(java.lang.String)
      */
     @Override
-    public void setVersionContentUrl(String versionContentUrl) {
+    public void setVersionContentUrl(@NonNull String versionContentUrl) {
         this.mVersionContentUrl = versionContentUrl;
     }
 
