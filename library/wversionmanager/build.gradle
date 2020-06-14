@@ -74,6 +74,7 @@ if (project.rootProject.file('local.properties').exists()) {
     apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
 }
 
+publish.dependsOn(":wversionmanager:assembleRelease")
 def githubProperties = new Properties()
 try {
     githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
